@@ -313,7 +313,7 @@ func resultPrint() {
 }
 
 func main() {
-	filenames := []string{"input1.txt"}
+	filenames := []string{"input1.txt", "input2.txt", "input3.txt"}
 	for _, filename := range filenames {
 		t := newTransport(filename)
 		t.northWestCornerRule()
