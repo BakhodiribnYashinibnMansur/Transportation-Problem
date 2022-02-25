@@ -28,6 +28,9 @@ type transport struct {
 var result []int
 var column int
 var row int
+var diff int
+var totalSrc int
+var totalDst int
 
 func check(err error) {
 	if err != nil {
@@ -55,8 +58,8 @@ func newTransport(filename string) *transport {
 	scanner.Scan()
 	numDests, err := strconv.Atoi(scanner.Text())
 	check(err)
-	column = numSources
-	row = numDests
+	column = numDests
+	row = numSources
 	src := make([]int, numSources)
 	for i := 0; i < numSources; i++ {
 		scanner.Scan()
@@ -72,15 +75,15 @@ func newTransport(filename string) *transport {
 		check(err)
 	}
 
-	totalSrc := 0
+	totalSrc = 0
 	for _, v := range src {
 		totalSrc += v
 	}
-	totalDst := 0
+	totalDst = 0
 	for _, v := range dst {
 		totalDst += v
 	}
-	diff := totalSrc - totalDst
+	diff = totalSrc - totalDst
 	if diff > 0 {
 		dst = append(dst, diff)
 
@@ -289,31 +292,66 @@ func (t *transport) printResult() {
 
 func resultPrint() {
 	var arr [][]int
-	for i := 0; i < row; i++ {
-		arr = append(arr, result[(row+1)*i:(i+1)*(row+1)])
-	}
-	for i := 0; i < len(arr); i++ {
-		for j := 0; j < len(arr[i])-1; j++ {
-			if arr[i][j] != 0 {
-				fmt.Printf(" %v - ombordan %v - istimolchigacha %v yuk sarf qilinadi.", i+1, j+1, arr[i][j])
-				fmt.Println()
+	if totalSrc > totalDst {
+		for i := 0; i < row; i++ {
+			arr = append(arr, result[(column+1)*i:(i+1)*(column+1)])
+		}
+		for i := 0; i < len(arr); i++ {
+			for j := 0; j < len(arr[i])-1; j++ {
+				if arr[i][j] != 0 {
+					fmt.Printf(" %v - podstansiyadan %v -  iste'molchigacha %v kvt uzatildi", i+1, j+1, arr[i][j])
+					fmt.Println()
+				}
 			}
 		}
-	}
-	fmt.Println()
-	for i := 0; i < len(arr); i++ {
-		for j := len(arr[i]) - 1; j < len(arr[i]); j++ {
-			if arr[i][j] != 0 {
-				fmt.Printf(" %v - omborda %v yuk ishlatilmay qoldi.", i+1, arr[i][j])
-				fmt.Println()
+		fmt.Println()
+		for i := 0; i < len(arr); i++ {
+			for j := len(arr[i]) - 1; j < len(arr[i]); j++ {
+				if arr[i][j] != 0 {
+					fmt.Printf(" %v - podstansiyada %v kvt quvvat uzatilmay qoldi.", i+1, arr[i][j])
+					fmt.Println()
+				}
 			}
 		}
+	} else if totalDst > totalSrc {
+		for i := 0; i <= row; i++ {
+			arr = append(arr, result[(column)*i:(i+1)*(column)])
+		}
+		for i := 0; i < len(arr)-1; i++ {
+			for j := 0; j < len(arr[i]); j++ {
+				if arr[i][j] != 0 {
+					fmt.Printf(" %v - podstansiyadan %v - iste'molchigacha %v kvt quvvat uzatiladi.", i, j+1, arr[i][j])
+					fmt.Println()
+				}
+			}
+		}
+		fmt.Println()
+		for i := len(arr) - 1; i < len(arr); i++ {
+			for j := 0; j < len(arr[i]); j++ {
+				if arr[i][j] != 0 {
+					fmt.Printf(" %v - podstansiyadan %v kvt quvvat uzatilmay  qoldi.", j+1, arr[i][j])
+					fmt.Println()
+				}
+			}
+		}
+	} else {
+		for i := 0; i < row; i++ {
+			arr = append(arr, result[(column)*i:(i+1)*(column)])
+		}
+		for i := 0; i < len(arr); i++ {
+			for j := 0; j < len(arr[i]); j++ {
+				if arr[i][j] != 0 {
+					fmt.Printf(" %v - podstansiyadan %v - iste'molchigacha %v kwt quvvat uzatilmay qoldi.", i+1, j+1, arr[i][j])
+					fmt.Println()
+				}
+			}
+		}
+		fmt.Println("Podstansiyalardagi hamma quvvat iste'molchilarga uzatildi. ")
 	}
-	fmt.Println()
 }
 
 func main() {
-	filenames := []string{"input1.txt", "input2.txt", "input3.txt"}
+	filenames := []string{"input5.txt"}
 	for _, filename := range filenames {
 		t := newTransport(filename)
 		t.northWestCornerRule()
